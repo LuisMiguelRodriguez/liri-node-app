@@ -19,101 +19,115 @@ var spotify = new Spotify({
 
 var a = process.argv[2];
 var b = process.argv[3];
-var c = parseInt(process.argv[4]);
 
-if ( a === 'my-tweets'){
+liri(a, b);``
 
- //  client.get('search/tweets', { q: {'screen_name':'tanukitek'}}, function(error, tweets, response) {
- //   console.log(tweets);
- //   console.log(response);
- // });
- var params = {screen_name: 'tanukitek', count: 20};
+function liri (a, b){
+  if ( a === 'my-tweets'){
+   //  client.get('search/tweets', { q: {'screen_name':'tanukitek'}}, function(error, tweets, response) {
+   //   console.log(tweets);
+   //   console.log(response);
+   // });
+   var params = {screen_name: 'tanukitek', count: 20};
 
- client.get('statuses/user_timeline', params, function(error, tweets, response) {
-   if (!error) {
-     for(var i = 0; i < tweets.length; i++){
-       console.log(tweets[i].text);
-       fs.appendFile("log.txt",
-         '\r\n'+ tweets[i].text , function(err){
-         if(err){
-           return console.log(err);
-         }
-       })
-     }
-    //  console.log(tweets);
-    //  console.log('something');
- }else {
-   console.log(error);
- }
+   client.get('statuses/user_timeline', params, function(error, tweets, response) {
+     if (!error) {
+       for(var i = 0; i < tweets.length; i++){
+         console.log(tweets[i].text);
+         fs.appendFile("log.txt",
+           '\r\n'+ tweets[i].text , function(err){
+           if(err){
+             return console.log(err);
+           }
+         })
+       }
+      //  console.log(tweets);
+      //  console.log('something');
+   }else {
+     console.log(error);
+   }
 
-});
-
-} else if ( a === 'spotify-this-song' ){
-
-  var q = b || 'The Sign';
-    spotify
-      .search({ type: 'track', query: q })
-      .then(function(response) {
-        // console.log(response.tracks.items[0]);
-        console.log("Artist: " + response.tracks.items[0].artists[0].name);
-        console.log("Song Name: " + response.tracks.items[0].name);
-        console.log("Preview Link: " + response.tracks.items[0].href);
-        console.log("Album: " + response.tracks.items[0].album.name);
-
-        fs.writeFile('log.txt', "\r\nArtist: " + response.tracks.items[0].artists[0].name +
-        "\r\nSong Name: " + response.tracks.items[0].name +
-        "\r\nPreview Link: " + response.tracks.items[0].href +
-        "\r\nAlbum: " + response.tracks.items[0].album.name,
-        function(err){
-          if(err){
-            console.log(err);
-          }
-        })
-      })
-      .catch(function(err) {
-        console.log(err);
-      });
-
-} else if ( a === 'movie-this'){
-  // https://api.themoviedb.org/3/search/movie?api_key=<<api_key>>&language=en-US&query=harvey&page=1&include_adult=false
-  var search = b || 'Mr. Nobody';
-  http.get("http://api.themoviedb.org/3/search/movie?api_key=" + keys.imdbKeys.apikey + "&language=en-US&query=" + search + "&page=1&include_adult=false", function(res) {
-  var body = ''; // Will contain the final response
-
-  res.on('data', function(data){
-    body += data;
   });
 
-  res.on('end', function() {
+  } else if ( a === 'spotify-this-song' ){
 
-    var parsed = JSON.parse(body);
-    // console.log(parsed.results);
-    var movie = parsed.results[0];
-    // console.log(movie);
-    console.log('Title: ' + movie.title);
-    console.log('Year: ' + movie.release_date);
-    console.log('IMDB Rating: ' + movie.vote_average);
-    console.log('Language: ' + movie.original_language);
-    console.log('Plot: ' + movie.overview);
+    var q = b || 'The Sign';
+      spotify
+        .search({ type: 'track', query: q })
+        .then(function(response) {
+          // console.log(response.tracks.items[0]);
+          console.log("Artist: " + response.tracks.items[0].artists[0].name);
+          console.log("Song Name: " + response.tracks.items[0].name);
+          console.log("Preview Link: " + response.tracks.items[0].href);
+          console.log("Album: " + response.tracks.items[0].album.name);
 
+          fs.appendFile('log.txt', "\r\nArtist: " + response.tracks.items[0].artists[0].name +
+          "\r\nSong Name: " + response.tracks.items[0].name +
+          "\r\nPreview Link: " + response.tracks.items[0].href +
+          "\r\nAlbum: " + response.tracks.items[0].album.name,
+          function(err){
+            if(err){
+              console.log(err);
+            }
+          })
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
 
-    fs.writeFile('log.txt',
-      '\r\nTitle: ' + movie.title +
-      '\r\nYear: ' + movie.release_date +
-      '\r\nIMDB Rating: ' + movie.vote_average +
-      '\r\nLanguage: ' + movie.original_language +
-      '\r\nPlot: ' + movie.overview,
-    function(err){
-      if(err){console.log(err)}
+  } else if ( a === 'movie-this'){
+    // https://api.themoviedb.org/3/search/movie?api_key=<<api_key>>&language=en-US&query=harvey&page=1&include_adult=false
+    var search = b || 'Mr. Nobody';
+    http.get("http://api.themoviedb.org/3/search/movie?api_key=" + keys.imdbKeys.apikey + "&language=en-US&query=" + search + "&page=1&include_adult=false", function(res) {
+    var body = ''; // Will contain the final response
+
+    res.on('data', function(data){
+      body += data;
     });
 
+    res.on('end', function() {
+
+      var parsed = JSON.parse(body);
+      // console.log(parsed.results);
+      var movie = parsed.results[0];
+      // console.log(movie);
+      console.log('Title: ' + movie.title);
+      console.log('Year: ' + movie.release_date);
+      console.log('IMDB Rating: ' + movie.vote_average);
+      console.log('Language: ' + movie.original_language);
+      console.log('Plot: ' + movie.overview);
+
+
+      fs.appendFile('log.txt',
+        '\r\nTitle: ' + movie.title +
+        '\r\nYear: ' + movie.release_date +
+        '\r\nIMDB Rating: ' + movie.vote_average +
+        '\r\nLanguage: ' + movie.original_language +
+        '\r\nPlot: ' + movie.overview,
+      function(err){
+        if(err){console.log(err)}
+      });
+
+    });
   });
-});
 
-} else if ( a === 'do-what-it-say'){
+  } else if ( a === 'do-what-it-say'){
+    // fs.readFile('random.txt',)
 
-} else {
-  console.log('Sorry you dont know how to follow instructions');
+    fs.readFile('random.txt', function (err, data) {
+     if (err) {
+        return console.error(err);
+     }
+     console.log("Asynchronous read: " + data.toString());
+     var a = data.toString().split(',');
+     console.log(a);
+     liri(a[0], a[1]);
+
+    });
+
+  } else {
+    console.log('Sorry you dont know how to follow instructions');
+  }
 }
 
 // OMBDB
