@@ -23,6 +23,8 @@ var b = process.argv[3];
 liri(a, b);``
 
 function liri (a, b){
+  var time = new Date();
+  var timeStamp = "#########  "+ a + " ######"+ time + "############################ \r\n";
   if ( a === 'my-tweets'){
    //  client.get('search/tweets', { q: {'screen_name':'tanukitek'}}, function(error, tweets, response) {
    //   console.log(tweets);
@@ -31,6 +33,7 @@ function liri (a, b){
    var params = {screen_name: 'tanukitek', count: 20};
 
    client.get('statuses/user_timeline', params, function(error, tweets, response) {
+     fs.appendFile("log.txt", '\r\n'+ timeStamp);
      if (!error) {
        for(var i = 0; i < tweets.length; i++){
          console.log(tweets[i].text);
@@ -61,7 +64,7 @@ function liri (a, b){
           console.log("Preview Link: " + response.tracks.items[0].href);
           console.log("Album: " + response.tracks.items[0].album.name);
 
-          fs.appendFile('log.txt', "\r\nArtist: " + response.tracks.items[0].artists[0].name +
+          fs.appendFile('log.txt', timeStamp + "\r\nArtist: " + response.tracks.items[0].artists[0].name +
           "\r\nSong Name: " + response.tracks.items[0].name +
           "\r\nPreview Link: " + response.tracks.items[0].href +
           "\r\nAlbum: " + response.tracks.items[0].album.name,
@@ -99,6 +102,7 @@ function liri (a, b){
 
 
       fs.appendFile('log.txt',
+        timeStamp +
         '\r\nTitle: ' + movie.title +
         '\r\nYear: ' + movie.release_date +
         '\r\nIMDB Rating: ' + movie.vote_average +
